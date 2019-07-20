@@ -1,0 +1,13 @@
+# Emacs
+
+*~
+\#*\#
+.\#*
+
+# Python
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+sdist/
