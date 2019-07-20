@@ -1,0 +1,8 @@
+include VERSION
+include LICENSE
+include README.md
+graft ephemeral
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *~
+global-exclude \#*\#
