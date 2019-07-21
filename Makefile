@@ -12,6 +12,9 @@ clean:
 develop:
 	pipenv install --dev
 
+shell:
+	pipenv shell
+
 lint:
 	pipenv run flake8 --max-line-length=119 --exclude=.git,__pycache__,.tox,.eggs,*.egg
 
