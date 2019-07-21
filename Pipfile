@@ -11,6 +11,7 @@ black = "*"
 flake8 = "*"
 pytest = "*"
 flake8-todos = "*"
+twine = "*"
 
 [packages]
 releasy = {editable = true,path = "."}
