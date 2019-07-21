@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "bf7e3321917174f3ed6b4a2dfef7aa2c41b968bac623be1f1579798bba077ffc"
+            "sha256": "61cbf57280e006570c6312dbc10710d6fb02ff0230fb2a3393aff6e01c45cf38"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,7 +16,7 @@
         ]
     },
     "default": {
-        "releasy": {
+        "lase": {
             "editable": true,
             "path": "."
         },

@@ -30,17 +30,17 @@ e2e-test:
 	pipenv run e2e/functional.sh
 
 release-start: test e2e-test
-	pipenv run releasy --remote origin start $${RELEASE_VERSION:+--version "$${RELEASE_VERSION}"}
+	pipenv run lase --remote origin start $${RELEASE_VERSION:+--version "$${RELEASE_VERSION}"}
 
 release-finish:
-	pipenv run releasy --remote origin finish
+	pipenv run lase --remote origin finish
 
 release: release-start release-finish
 
-sdist: dist/releasy-$(VERSION).tar.gz
+sdist: dist/lase-$(VERSION).tar.gz
 
-dist/releasy-$(VERSION).tar.gz:
+dist/lase-$(VERSION).tar.gz:
 	python3 setup.py sdist
 
-publish: test e2e-test dist/releasy-$(VERSION).tar.gz
-	pipenv run twine upload dist/releasy-$(VERSION).tar.gz
+publish: test e2e-test dist/lase-$(VERSION).tar.gz
+	pipenv run twine upload dist/lase-$(VERSION).tar.gz

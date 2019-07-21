@@ -3,7 +3,7 @@
 # MIT license
 # Copyright 2019 Sergej Alikov <sergej.alikov@gmail.com>
 
-__DOC__='Functional tests for Releasy'
+__DOC__='Functional tests for Lase'
 
 set -euo pipefail
 
@@ -43,12 +43,12 @@ test_local_next_release () {
     git add VERSION
     git commit -m 'Add VERSION'
 
-    releasy start
+    lase start
 
     assert_stdout 'cat VERSION' <<< '0.1.0'
     assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'release/0.1.0'
 
-    releasy finish
+    lase finish
 
     assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'develop'
 
@@ -79,12 +79,12 @@ test_local_specific_release () {
     git add VERSION
     git commit -m 'Add VERSION'
 
-    releasy start --version '1.2.3'
+    lase start --version '1.2.3'
 
     assert_stdout 'cat VERSION' <<< '1.2.3'
     assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'release/1.2.3'
 
-    releasy finish
+    lase finish
 
     assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'develop'
 
@@ -115,12 +115,12 @@ test_local_next_pre_release () {
     git add VERSION
     git commit -m 'Add VERSION'
 
-    releasy start
+    lase start
 
     assert_stdout 'cat VERSION' <<< '0.1.0-BETA2'
     assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'release/0.1.0-BETA2'
 
-    releasy finish
+    lase finish
 
     assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'develop'
 
@@ -151,9 +151,9 @@ test_local_fails_on_existing_release () {
     git add VERSION
     git commit -m 'Add VERSION'
 
-    releasy start
+    lase start
 
-    assert_fail 'releasy start'
+    assert_fail 'lase start'
 }
 
 
@@ -185,12 +185,12 @@ test_with_remote_next_release () {
 
     git clone "${workspace}/remote" .
 
-    releasy --remote origin start
+    lase --remote origin start
 
     assert_stdout 'cat VERSION' <<< '0.1.0'
     assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'release/0.1.0'
 
-    releasy --remote origin finish
+    lase --remote origin finish
 
     assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'develop'
 
@@ -229,14 +229,14 @@ test_with_remote_fails_on_existing_release () {
     git push origin master
     git push origin develop
 
-    releasy --remote origin start
+    lase --remote origin start
 
     mkdir -p "${workspace}/checkout2"
     cd "${workspace}/checkout2"
 
     git clone "${workspace}/remote" .
 
-    assert_fail 'releasy --remote origin start'
+    assert_fail 'lase --remote origin start'
 }
 
 

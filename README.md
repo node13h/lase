@@ -1,10 +1,10 @@
-# releasy - Gitflow release tool
+# lase - Gitflow release tool
 
 
 ## Installing
 
 ```sh
-pip install releasy
+pip install lase
 ```
 
 
@@ -13,13 +13,13 @@ pip install releasy
 Start a release:
 
 ```sh
-releasy start
+lase start
 ```
 
 Finish a release:
 
 ```sh
-releasy finish
+lase finish
 ```
 
 

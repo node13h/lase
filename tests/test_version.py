@@ -1,7 +1,7 @@
 # MIT license
 # Copyright 2019 Sergej Alikov <sergej.alikov@gmail.com>
 
-from releasy import version
+from lase import version
 
 
 def test_next_dev_release():

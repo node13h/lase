@@ -14,7 +14,7 @@ with open(path.join(here, 'VERSION')) as f:
 
 
 setup(
-    name='releasy',
+    name='lase',
 
     version=version,
 
@@ -22,7 +22,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
 
-    url='https://github.com/node13h/releasy',
+    url='https://github.com/node13h/lase',
 
     author='Sergej Alikov',
     author_email='sergej.alikov@gmail.com',
@@ -44,6 +44,6 @@ setup(
         'semver',
     ],
     entry_points={
-        'console_scripts': ['releasy=releasy:main'],
+        'console_scripts': ['lase=lase:main'],
     },
 )

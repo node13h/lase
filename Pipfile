@@ -14,7 +14,7 @@ flake8-todos = "*"
 twine = "*"
 
 [packages]
-releasy = {editable = true,path = "."}
+lase = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"
