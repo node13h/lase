@@ -9,7 +9,7 @@ clean:
 	rm -rf dist
 	rm -rf build
 	rm -rf *.egg-info
-	pipenv --rm
+	pipenv --rm || true
 
 develop:
 	pipenv install --dev
