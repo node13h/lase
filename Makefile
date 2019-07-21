@@ -23,3 +23,6 @@ test: lint
 
 update-deps:
 	pipenv update
+
+e2e-test:
+	pipenv run e2e/functional.sh
