@@ -1,6 +1,6 @@
 VERSION = $(shell cat VERSION)
 
-.PHONY: all clean develop shell lint test update-deps e2e-test release-start release-finish release
+.PHONY: all clean develop shell lint test update-deps e2e-test release-start release-finish release sdist publish
 
 all:
 	true
