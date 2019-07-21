@@ -42,5 +42,5 @@ sdist: dist/releasy-$(VERSION).tar.gz
 dist/releasy-$(VERSION).tar.gz:
 	python3 setup.py sdist
 
-publish:
-	pipenv run twine upload dist/*
+publish: test e2e-test dist/releasy-$(VERSION).tar.gz
+	pipenv run twine upload dist/releasy-$(VERSION).tar.gz
