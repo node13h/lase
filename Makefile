@@ -30,7 +30,7 @@ e2e-test:
 	pipenv run e2e/functional.sh
 
 release-start: test e2e-test
-	pipenv run releasy --remote origin start
+	pipenv run releasy --remote origin start $${RELEASE_VERSION:+--version "$${RELEASE_VERSION}"}
 
 release-finish:
 	pipenv run releasy --remote origin finish
