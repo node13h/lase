@@ -3,10 +3,13 @@
 
 from subprocess import run
 import re
+import logging
+
+RE_LOCAL_BRANCH = r'^refs\/heads\/(.+)$'
+RE_REMOTE_BRANCH = r'^refs\/remotes\/(.+?)\/(.+)$'
 
 
-RE_LOCAL_BRANCH = r'^refs/heads/(.*)$'
-RE_REMOTE_BRANCH = r'^refs/remotes/(.*)/(.*)$'
+logger = logging.getLogger(__name__)
 
 
 class NonZeroExitError(RuntimeError):
@@ -14,9 +17,13 @@ class NonZeroExitError(RuntimeError):
 
 
 def cmd(params):
+    logger.debug('Executing `{}`'.format(' '.join(params)))
     cp = run(params, capture_output=True, text=True)
 
     if cp.returncode != 0:
+        for line in cp.stderr.strip('\n').splitlines():
+            logger.debug('STDERR: {}'.format(line))
+
         raise NonZeroExitError('`{}` terminated with the non-zero exit code {}'.format(
             ' '.join(params), cp.returncode))
 
@@ -44,31 +51,19 @@ def working_tree_is_clean(check_untracked_files=True):
     lines = cmd(['git', 'ls-files', '--exclude-standard', '--others'])
 
     if lines:
+        for line in lines:
+            logger.debug('Untracked file: {}'.format(line))
+
         return False
 
     return True
 
 
-def upstream_of(branch):
-    params = [
-        'git',
-        'for-each-ref',
-        '--format=%(upstream:short)',
-        'refs/heads/{}'.format(branch)]
-
-    lines = cmd(params)
-
-    if lines:
-        return lines[0]
-    else:
-        raise RuntimeError('{} is not a tracking branch'.format(branch))
-
-
-def branch_is_up_to_date(branch):
+def branch_is_up_to_date(branch, remote):
     params = [
         'git',
         'rev-list',
-        '{}..{}'.format(branch, upstream_of(branch)),
+        '{}..{}/{}'.format(branch, remote, branch),
         '--count']
 
     lines = cmd(params)

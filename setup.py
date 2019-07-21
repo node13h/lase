@@ -43,4 +43,7 @@ setup(
     install_requires=[
         'semver',
     ],
+    entry_points={
+        'console_scripts': ['releasy=releasy:main'],
+    },
 )
