@@ -1,3 +1,5 @@
+VERSION = $(shell cat VERSION)
+
 .PHONY: all clean develop shell lint test update-deps e2e-test release-start release-finish release
 
 all:
@@ -34,3 +36,8 @@ release-finish:
 	pipenv run releasy --remote origin finish
 
 release: release-start release-finish
+
+sdist: dist/releasy-$(VERSION).tar.gz
+
+dist/releasy-$(VERSION).tar.gz:
+	python3 setup.py sdist
