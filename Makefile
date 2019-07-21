@@ -1,4 +1,4 @@
-.PHONY: all clean develop lint test
+.PHONY: all clean develop shell lint test update-deps e2e-test release-start release-finish release
 
 all:
 	true
@@ -26,3 +26,11 @@ update-deps:
 
 e2e-test:
 	pipenv run e2e/functional.sh
+
+release-start: test e2e-test
+	pipenv run releasy --remote origin start
+
+release-finish:
+	pipenv run releasy --remote origin finish
+
+release: release-start release-finish
