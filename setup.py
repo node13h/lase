@@ -32,7 +32,7 @@ setup(
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         'Development Status :: 4 - Beta',
-        'OSI Approved :: MIT License',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
     ],
 
