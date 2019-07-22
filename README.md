@@ -10,16 +10,32 @@ pip install lase
 
 ## Using
 
-Start a release:
+Prerequisites:
+
+- Git-based project with `master` and `develop` branches present, and Maven-style version
+  number in the `VERSION` file
+
+
+See `lase --help` for the list of all options.
+
+
+### Starting a release of your project with remote operation enabled
 
 ```sh
-lase start
+cd /path/to/project/git/repo
+lase --remote origin start
 ```
 
-Finish a release:
+The above command will, and create the `release/X.Y.Z` release branch where `X.Y.Z` is the version
+being released, bumping the version in the `VERSION` file on the `develop` branch at the same time.
+
+After reviewing the diff between the release and `master` branches proceed to the finish step below.
+
+### Finishing a release of a your project with remote operation enabled
 
 ```sh
-lase finish
+cd /path/to/project/git/repo
+lase --remote origin finish
 ```
 
 
@@ -30,38 +46,46 @@ Prerequisites:
 - Python 3
 - pipenv
 
-
 Initialize a virtualenv with dev dependencies installed:
 
 ```sh
 make develop
 ```
 
-Run unit-tests:
+
+### Running unit-tests
 
 ```sh
 make test
 ```
 
-Run functional tests (you'll need [Shelter](https://github.com/node13h/shelter) installed to run these tests):
+
+### Running E2E tests
+
+Prerequisites:
+
+- [Shelter](https://github.com/node13h/shelter)
 
 ```sh
 make e2e-test
 ```
 
-Start a release:
+
+### Starting a release
 
 ```sh
 make release-start
 ```
 
-Finish a release:
+
+### Finishing a release
 
 ```sh
 make release-finish
 ```
 
-Buld and publish the source distribution for the version X.Y.Z:
+
+### Building and publishing the source distribution for the version X.Y.Z:
 
 ```sh
 git checkout X.Y.Z
