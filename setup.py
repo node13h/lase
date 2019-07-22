@@ -41,7 +41,7 @@ setup(
 
     # See https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-        'semver',
+        'semver~=2.8',
     ],
     entry_points={
         'console_scripts': ['lase=lase:main'],
