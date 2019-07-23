@@ -27,8 +27,6 @@ setup(
     author='Sergej Alikov',
     author_email='sergej.alikov@gmail.com',
 
-    license='MIT',
-
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         'Development Status :: 4 - Beta',
