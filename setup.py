@@ -27,7 +27,7 @@ setup(
     author='Sergej Alikov',
     author_email='sergej.alikov@gmail.com',
 
-    license='AGPL-3.0',
+    license='MIT',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
