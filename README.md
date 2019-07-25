@@ -97,10 +97,11 @@ remote. Default value: `origin`
 make release-finish
 ```
 
+`release-finish` will leave the release Git tag checked out on completion.
 
-### Building and publishing the source distribution for the version X.Y.Z:
+
+### Building and publishing the source distribution:
 
 ```sh
-git checkout X.Y.Z
 make publish
 ```

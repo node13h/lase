@@ -53,13 +53,11 @@ def start(release_version=None, version_file='VERSION', remote=None):
     if remote is not None:
         git.push(remote, release_branch)
 
-    output = {
+    return {
         'release_version': release_version,
         'release_branch': release_branch,
         'next_version': next_version,
     }
-
-    print(json.dumps(output))
 
 
 def finish(version_file='VERSION', remote=None):
@@ -127,12 +125,12 @@ def finish(version_file='VERSION', remote=None):
 
     git.delete_branch(release_branch, remote=remote)
 
-    output = {
+    git.checkout(release_tag)
+
+    return {
         'release_version': release_version,
         'release_tag': release_tag
     }
-
-    print(json.dumps(output))
 
 
 def parse_args(argv):
@@ -147,6 +145,10 @@ def parse_args(argv):
     parser.add_argument(
         '--remote',
         help='remote name to work with. Leave unset for local-only operation')
+
+    parser.add_argument(
+        '--json', action='store_true', default=False,
+        help='enable JSON output')
 
     parser.add_argument(
         '--version-file',
@@ -180,9 +182,12 @@ def main():
 
     try:
         if args.command == 'start':
-            start(args.version, args.version_file, args.remote)
+            result = start(args.version, args.version_file, args.remote)
         elif args.command == 'finish':
-            finish(args.version_file, args.remote)
+            result = finish(args.version_file, args.remote)
+
+        if args.json:
+            print(json.dumps(result))
     except KeyboardInterrupt:
         return 0
     except Exception as e:

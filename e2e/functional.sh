@@ -50,7 +50,9 @@ test_local_next_release () {
 
     lase finish
 
-    assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'develop'
+    assert_stdout 'git name-rev --name-only HEAD' <<< 'tags/0.1.0^0'
+
+    git checkout develop
 
     assert_stdout 'cat VERSION' <<< '0.1.1-SNAPSHOT'
     assert_stdout_not_contains 'git for-each-ref --format="%(refname)" refs/heads' '^refs/heads/release/'
@@ -63,7 +65,7 @@ test_local_next_release () {
 }
 
 
-test_local_output () {
+test_local_json_output () {
     declare workspace="${TEMP_DIR}/${FUNCNAME[0]}"
 
     mkdir -p "${workspace}/local"
@@ -79,14 +81,14 @@ test_local_output () {
     git add VERSION
     git commit -m 'Add VERSION'
 
-    assert_stdout 'lase start | jq -S .' <<EOF
+    assert_stdout 'lase --json start | jq -S .' <<EOF
 {
   "next_version": "0.1.1-SNAPSHOT",
   "release_branch": "release/0.1.0",
   "release_version": "0.1.0"
 }
 EOF
-    assert_stdout 'lase finish | jq -S .' <<EOF
+    assert_stdout 'lase --json finish | jq -S .' <<EOF
 {
   "release_tag": "0.1.0",
   "release_version": "0.1.0"
@@ -118,7 +120,9 @@ test_local_specific_release () {
 
     lase finish
 
-    assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'develop'
+    assert_stdout 'git name-rev --name-only HEAD' <<< 'tags/1.2.3^0'
+
+    git checkout develop
 
     assert_stdout 'cat VERSION' <<< '1.2.4-SNAPSHOT'
     assert_stdout_not_contains 'git for-each-ref --format="%(refname)" refs/heads' '^refs/heads/release/'
@@ -154,7 +158,9 @@ test_local_next_pre_release () {
 
     lase finish
 
-    assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'develop'
+    assert_stdout 'git name-rev --name-only HEAD' <<< 'tags/0.1.0-BETA2^0'
+
+    git checkout develop
 
     assert_stdout 'cat VERSION' <<< '0.1.0-BETA3-SNAPSHOT'
     assert_stdout_not_contains 'git for-each-ref --format="%(refname)" refs/heads' '^refs/heads/release/'
@@ -224,7 +230,9 @@ test_with_remote_next_release () {
 
     lase --remote origin finish
 
-    assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'develop'
+    assert_stdout 'git name-rev --name-only HEAD' <<< 'tags/0.1.0^0'
+
+    git checkout develop
 
     assert_stdout 'cat VERSION' <<< '0.1.1-SNAPSHOT'
     assert_stdout_not_contains 'git for-each-ref --format="%(refname)" refs/heads' '^refs/heads/release/'

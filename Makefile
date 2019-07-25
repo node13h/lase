@@ -38,7 +38,7 @@ release-start: test e2e-test
 	pipenv run lase $${RELEASE_REMOTE:+--remote "$${RELEASE_REMOTE}"} start $${RELEASE_VERSION:+--version "$${RELEASE_VERSION}"}
 
 release-finish:
-	tag=$$(pipenv run lase $${RELEASE_REMOTE:+--remote "$${RELEASE_REMOTE}"} finish | jq -er .release_tag) && git checkout "$$tag"
+	pipenv run lase $${RELEASE_REMOTE:+--remote "$${RELEASE_REMOTE}"} finish
 	if [ "$${RELEASE_PUBLISH}" -eq 1 ]; then $(MAKE) $(lastword $(MAKEFILE_LIST)) publish; fi
 
 sdist: $(SDIST_TARBALL)
