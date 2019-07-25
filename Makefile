@@ -2,7 +2,7 @@ PROJECT := lase
 VERSION = $(shell cat VERSION)
 SDIST_TARBALL = dist/$(PROJECT)-$(VERSION).tar.gz
 
-.PHONY: all clean develop shell lint test update-deps e2e-test release-start release-finish release sdist publish
+.PHONY: all clean develop shell lint test update-deps e2e-test release-start release-finish sdist publish
 
 all:
 
