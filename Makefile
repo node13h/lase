@@ -1,14 +1,16 @@
+PROJECT := lase
 VERSION = $(shell cat VERSION)
+SDIST_TARBALL = dist/$(PROJECT)-$(VERSION).tar.gz
 
 .PHONY: all clean develop shell lint test update-deps e2e-test release-start release-finish release sdist publish
 
 all:
-	true
 
 clean:
 	rm -rf dist
 	rm -rf build
-	rm -rf *.egg-info
+	rm -f *.egg-info
+	rm -f Pipfile.lock
 	pipenv --rm || true
 
 develop:
@@ -33,14 +35,13 @@ release-start: test e2e-test
 	pipenv run lase --remote origin start $${RELEASE_VERSION:+--version "$${RELEASE_VERSION}"}
 
 release-finish:
-	pipenv run lase --remote origin finish
+	tag=$(pipenv run lase --remote origin finish | jq -er .release_tag) && git checkout "$$tag"
+	$(MAKE) $(lastword $(MAKEFILE_LIST)) publish
 
-release: release-start release-finish
+sdist: $(SDIST_TARBALL)
 
-sdist: dist/lase-$(VERSION).tar.gz
-
-dist/lase-$(VERSION).tar.gz:
+$(SDIST_TARBALL):
 	python3 setup.py sdist
 
-publish: test e2e-test dist/lase-$(VERSION).tar.gz
-	pipenv run twine upload dist/lase-$(VERSION).tar.gz
+publish: test e2e-test $(SDIST_TARBALL)
+	pipenv run twine upload $(SDIST_TARBALL)

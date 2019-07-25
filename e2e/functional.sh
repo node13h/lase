@@ -63,6 +63,38 @@ test_local_next_release () {
 }
 
 
+test_local_output () {
+    declare workspace="${TEMP_DIR}/${FUNCNAME[0]}"
+
+    mkdir -p "${workspace}/local"
+
+    cd "${workspace}/local"
+    git init .
+
+    touch foo
+    git add foo
+    git commit -m 'Add foo'
+    git checkout -b develop
+    printf '0.1.0-SNAPSHOT\n' >VERSION
+    git add VERSION
+    git commit -m 'Add VERSION'
+
+    assert_stdout 'lase start | jq -S .' <<EOF
+{
+  "next_version": "0.1.1-SNAPSHOT",
+  "release_branch": "release/0.1.0",
+  "release_version": "0.1.0"
+}
+EOF
+    assert_stdout 'lase finish | jq -S .' <<EOF
+{
+  "release_tag": "0.1.0",
+  "release_version": "0.1.0"
+}
+EOF
+}
+
+
 test_local_specific_release () {
     declare workspace="${TEMP_DIR}/${FUNCNAME[0]}"
 
