@@ -4,6 +4,7 @@
 import sys
 import argparse
 import logging
+import json
 
 from . import version
 from . import git
@@ -52,6 +53,14 @@ def start(release_version=None, version_file='VERSION', remote=None):
     if remote is not None:
         git.push(remote, release_branch)
 
+    output = {
+        'release_version': release_version,
+        'release_branch': release_branch,
+        'next_version': next_version,
+    }
+
+    print(json.dumps(output))
+
 
 def finish(version_file='VERSION', remote=None):
     if not git.working_tree_is_clean():
@@ -96,10 +105,12 @@ def finish(version_file='VERSION', remote=None):
     else:
         release_message = 'Release {}'.format(release_version)
 
-    git.tag(release_version, release_message)
+    release_tag = release_version
+
+    git.tag(release_tag, release_message)
 
     if remote is not None:
-        git.push(remote, release_version)
+        git.push(remote, release_tag)
 
     git.checkout('develop')
 
@@ -115,6 +126,13 @@ def finish(version_file='VERSION', remote=None):
         git.push(remote, 'develop')
 
     git.delete_branch(release_branch, remote=remote)
+
+    output = {
+        'release_version': release_version,
+        'release_tag': release_tag
+    }
+
+    print(json.dumps(output))
 
 
 def parse_args(argv):
