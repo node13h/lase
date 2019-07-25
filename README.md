@@ -118,7 +118,7 @@ Variables:
 
 - `RELEASE_REMOTE` set to the name of the Git remote. Set to empty to disable pushes to
 remote. Default value: `origin`
-- `RELEASE_PUBLISH` - set to `1` to enable publishing of the sdist tarball after the release`
+- `RELEASE_PUBLISH` set to `1` to enable publishing of the sdist tarball after the release`
 
 ```sh
 make release-finish
