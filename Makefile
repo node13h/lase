@@ -1,8 +1,9 @@
 PROJECT := lase
 VERSION = $(shell cat VERSION)
 SDIST_TARBALL = dist/$(PROJECT)-$(VERSION).tar.gz
-RELEASE_REMOTE := origin
-RELEASE_PUBLISH := 0
+
+export RELEASE_REMOTE := origin
+export RELEASE_PUBLISH := 0
 
 .PHONY: all clean develop shell lint test update-deps e2e-test release-start release-finish sdist publish
 
