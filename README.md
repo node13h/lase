@@ -44,12 +44,39 @@ lase --remote origin finish
 Prerequisites:
 
 - Python 3
-- pipenv
+- [pipenv](https://docs.pipenv.org/en/latest/#install-pipenv-today)
 
 Initialize a virtualenv with dev dependencies installed:
 
 ```sh
 make develop
+```
+
+
+### Project dependencies
+
+Project dependencies shoud always be specified in `setup.py` using the
+[compatible release](https://www.python.org/dev/peps/pep-0440/#compatible-release)
+notation.
+
+
+### Updating dependencies in virtualenv
+
+Run the following after updating `setup.py`
+
+```sh
+make update-deps
+```
+
+
+### Installing development dependencies
+
+Replace `<PACKAGE>` with the actual name, and `<VERSION>` with the MAJOR.MINOR
+(or MAJOR.MINOR.PATCH for versions below 1.0.0) version of the package.
+[Read more on compatible releases](https://www.python.org/dev/peps/pep-0440/#compatible-release).
+
+```sh
+pipenv install --dev <PACKAGE>~=<VERSION>
 ```
 
 
