@@ -12,7 +12,7 @@ all:
 clean:
 	rm -rf dist
 	rm -rf build
-	rm -f *.egg-info
+	rm -rf *.egg-info
 	rm -f Pipfile.lock
 	pipenv --rm || true
 
