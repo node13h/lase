@@ -73,12 +73,25 @@ make e2e-test
 
 ### Starting a release
 
+Variables:
+
+- `RELEASE_REMOTE` set to the name of the Git remote. Set to empty to disable pushes to
+remote. Default value: `origin`
+- `RELEASE_VERSION` override the release version, or leave empty to release the current
+snapshot (`-SNAPSHOT` will be stripped off). Empty by default
+
 ```sh
 make release-start
 ```
 
 
 ### Finishing a release
+
+Variables:
+
+- `RELEASE_REMOTE` set to the name of the Git remote. Set to empty to disable pushes to
+remote. Default value: `origin`
+- `RELEASE_PUBLISH` - set to `1` to enable publishing of the sdist tarball after the release`
 
 ```sh
 make release-finish
