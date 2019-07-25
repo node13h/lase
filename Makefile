@@ -1,6 +1,8 @@
 PROJECT := lase
 VERSION = $(shell cat VERSION)
 SDIST_TARBALL = dist/$(PROJECT)-$(VERSION).tar.gz
+RELEASE_REMOTE := origin
+RELEASE_PUBLISH := 0
 
 .PHONY: all clean develop shell lint test update-deps e2e-test release-start release-finish sdist publish
 
@@ -32,11 +34,11 @@ e2e-test:
 	pipenv run e2e/functional.sh
 
 release-start: test e2e-test
-	pipenv run lase --remote origin start $${RELEASE_VERSION:+--version "$${RELEASE_VERSION}"}
+	pipenv run lase $${RELEASE_REMOTE:+--remote "$${RELEASE_REMOTE}" start $${RELEASE_VERSION:+--version "$${RELEASE_VERSION}"}
 
 release-finish:
-	tag=$$(pipenv run lase --remote origin finish | jq -er .release_tag) && git checkout "$$tag"
-	$(MAKE) $(lastword $(MAKEFILE_LIST)) publish
+	tag=$$(pipenv run lase $${RELEASE_REMOTE:+--remote "$${RELEASE_REMOTE}" finish | jq -er .release_tag) && git checkout "$$tag"
+	if [ "$${RELEASE_PUBLISH}" -eq 1 ]; then $(MAKE) $(lastword $(MAKEFILE_LIST)) publish; fi
 
 sdist: $(SDIST_TARBALL)
 
