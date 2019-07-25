@@ -35,7 +35,7 @@ release-start: test e2e-test
 	pipenv run lase --remote origin start $${RELEASE_VERSION:+--version "$${RELEASE_VERSION}"}
 
 release-finish:
-	tag=$(pipenv run lase --remote origin finish | jq -er .release_tag) && git checkout "$$tag"
+	tag=$$(pipenv run lase --remote origin finish | jq -er .release_tag) && git checkout "$$tag"
 	$(MAKE) $(lastword $(MAKEFILE_LIST)) publish
 
 sdist: $(SDIST_TARBALL)
