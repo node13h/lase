@@ -9,6 +9,8 @@ import json
 from . import version
 from . import git
 
+logger = logging.getLogger(__name__)
+
 
 def start(release_version=None, version_file='VERSION', remote=None):
     if not git.working_tree_is_clean():
@@ -169,8 +171,6 @@ def parse_args(argv):
 
 
 def main():
-    logger = logging.getLogger(__name__)
-
     args = parse_args(sys.argv[1:])
 
     if args.debug:
