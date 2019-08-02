@@ -188,8 +188,6 @@ def main():
 
         if args.json:
             print(json.dumps(result))
-    except KeyboardInterrupt:
-        return 0
     except Exception as e:
         logger.error(str(e))
 
