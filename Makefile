@@ -5,7 +5,7 @@ SDIST_TARBALL = dist/$(PROJECT)-$(VERSION).tar.gz
 export RELEASE_REMOTE := origin
 export RELEASE_PUBLISH := 0
 
-.PHONY: all clean develop shell lint build test update-deps e2e-test release-start release-finish sdist publish
+.PHONY: all clean mrproper develop shell lint build test update-deps e2e-test release-start release-finish sdist publish
 
 all:
 
@@ -14,6 +14,8 @@ clean:
 	rm -rf build
 	rm -rf *.egg-info
 	rm -f Pipfile.lock
+
+mrproper: clean
 	-pipenv --rm
 
 develop:
@@ -40,7 +42,7 @@ e2e-test:
 release-start: test e2e-test
 	pipenv run lase $${RELEASE_REMOTE:+--remote "$${RELEASE_REMOTE}"} start $${RELEASE_VERSION:+--version "$${RELEASE_VERSION}"}
 
-release-finish:
+release-finish: test
 	pipenv run lase $${RELEASE_REMOTE:+--remote "$${RELEASE_REMOTE}"} finish
 	if [ "$${RELEASE_PUBLISH}" -eq 1 ]; then $(MAKE) -f $(lastword $(MAKEFILE_LIST)) publish; fi
 
