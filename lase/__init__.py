@@ -92,17 +92,20 @@ def finish(
 
     # Abort early if any of the branches are not up-to-date
     if remote is not None:
-        for branch in (develop_branch, master_branch, release_branch):
+        for branch in filter(None, (develop_branch, master_branch, release_branch)):
             git.checkout(branch)
             if not git.branch_is_up_to_date(branch, remote):
                 raise RuntimeError('{} branch is not up to date'.format(branch))
 
-    git.checkout(master_branch)
+    if master_branch:
+        git.checkout(master_branch)
 
-    git.merge(release_branch, 'Merge {}'.format(release_branch), remote=remote)
+        git.merge(release_branch, 'Merge {}'.format(release_branch), remote=remote)
 
-    if remote is not None:
-        git.push(remote, master_branch)
+        if remote is not None:
+            git.push(remote, master_branch)
+    else:
+        git.checkout(release_branch)
 
     release_version = version.from_file(version_file)
 
@@ -122,7 +125,10 @@ def finish(
 
     current_version = version.from_file(version_file)
 
-    git.merge(master_branch, 'Merge {}'.format(master_branch), remote=remote)
+    if master_branch:
+        git.merge(master_branch, 'Merge {}'.format(master_branch), remote=remote)
+    else:
+        git.merge(release_branch, 'Merge {}'.format(release_branch), remote=remote)
 
     version.to_file(current_version, version_file)
 
@@ -158,6 +164,10 @@ def parse_args(argv):
         '--master-branch',
         default='master',
         help='name of the master branch')
+
+    parser.add_argument(
+        '--skip-master', action='store_true', default=False,
+        help='do not involve master branch')
 
     parser.add_argument(
         '--develop-branch',
@@ -197,12 +207,17 @@ def main():
     logging.basicConfig(level=log_level)
 
     try:
+        if args.skip_master:
+            master_branch = None
+        else:
+            master_branch = args.master_branch
+
         if args.command == 'start':
             result = start(
                 args.version, args.version_file, args.remote, args.develop_branch)
         elif args.command == 'finish':
             result = finish(
-                args.version_file, args.remote, args.develop_branch, args.master_branch)
+                args.version_file, args.remote, args.develop_branch, master_branch)
 
         if args.json:
             print(json.dumps(result))
