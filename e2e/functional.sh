@@ -280,6 +280,61 @@ test_with_remote_fails_on_existing_release () {
 }
 
 
+test_with_remote_custom_branch_names () {
+    declare workspace="${TEMP_DIR}/${FUNCNAME[0]}"
+
+    mkdir -p "${workspace}/remote"
+
+    cd "${workspace}/remote"
+    git init --bare .
+
+    mkdir -p "${workspace}/checkout1"
+    cd "${workspace}/checkout1"
+
+    git clone "${workspace}/remote" .
+
+    touch foo
+    git add foo
+    git commit -m 'Add foo'
+    git branch -m master_1
+
+    git checkout -b develop_1
+    printf '0.1.0-SNAPSHOT\n' >VERSION
+    git add VERSION
+    git commit -m 'Add VERSION'
+    git push origin master_1
+    git push origin develop_1
+
+    mkdir -p "${workspace}/checkout2"
+    cd "${workspace}/checkout2"
+
+    git clone "${workspace}/remote" .
+
+    git checkout master_1
+
+    lase --remote origin --develop-branch develop_1 start
+
+    assert_stdout 'cat VERSION' <<< '0.1.0'
+    assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'release/0.1.0'
+
+    lase --remote origin --develop-branch develop_1 --master-branch master_1 finish
+
+    assert_stdout 'git name-rev --name-only HEAD' <<< 'tags/0.1.0^0'
+
+    git checkout develop_1
+
+    assert_stdout 'cat VERSION' <<< '0.1.1-SNAPSHOT'
+    assert_stdout_not_contains 'git for-each-ref --format="%(refname)" refs/heads' '^refs/heads/release/'
+    assert_stdout_not_contains 'git for-each-ref --format="%(refname)" refs/remotes' '^refs/remotes/origin/release/'
+
+    assert_stdout_contains 'git for-each-ref --format="%(refname)" refs/tags' '^refs/tags/0.1.0$'
+
+    git checkout master_1
+
+    assert_stdout 'cat VERSION' <<< '0.1.0'
+}
+
+
 suite () {
     shelter_run_test_class Local test_local_
     shelter_run_test_class Remote test_with_remote_
