@@ -12,7 +12,10 @@ from . import git
 logger = logging.getLogger(__name__)
 
 
-def start(release_version=None, version_file='VERSION', remote=None):
+def start(
+        release_version=None, version_file='VERSION', remote=None,
+        develop_branch='develop'):
+
     if not git.working_tree_is_clean():
         raise RuntimeError('Working tree is not clean')
 
@@ -27,10 +30,10 @@ def start(release_version=None, version_file='VERSION', remote=None):
 
     # Begin mutation
 
-    git.checkout('develop')
+    git.checkout(develop_branch)
 
-    if remote is not None and not git.branch_is_up_to_date('develop', remote):
-        raise RuntimeError('develop branch is not up to date')
+    if remote is not None and not git.branch_is_up_to_date(develop_branch, remote):
+        raise RuntimeError('{} branch is not up to date'.format(develop_branch))
 
     if release_version is None:
         current_version = version.from_file(version_file)
@@ -44,7 +47,7 @@ def start(release_version=None, version_file='VERSION', remote=None):
     git.commit((version_file,), 'Start {}'.format(next_version))
 
     if remote is not None:
-        git.push(remote, 'develop')
+        git.push(remote, develop_branch)
 
     git.checkout_new_branch(release_branch)
 
@@ -62,7 +65,10 @@ def start(release_version=None, version_file='VERSION', remote=None):
     }
 
 
-def finish(version_file='VERSION', remote=None):
+def finish(
+        version_file='VERSION', remote=None,
+        develop_branch='develop', master_branch='master'):
+
     if not git.working_tree_is_clean():
         raise RuntimeError('Working tree is not clean')
 
@@ -86,17 +92,20 @@ def finish(version_file='VERSION', remote=None):
 
     # Abort early if any of the branches are not up-to-date
     if remote is not None:
-        for branch in ('develop', 'master', release_branch):
+        for branch in filter(None, (develop_branch, master_branch, release_branch)):
             git.checkout(branch)
             if not git.branch_is_up_to_date(branch, remote):
                 raise RuntimeError('{} branch is not up to date'.format(branch))
 
-    git.checkout('master')
+    if master_branch:
+        git.checkout(master_branch)
 
-    git.merge(release_branch, 'Merge {}'.format(release_branch), remote=remote)
+        git.merge(release_branch, 'Merge {}'.format(release_branch), remote=remote)
 
-    if remote is not None:
-        git.push(remote, 'master')
+        if remote is not None:
+            git.push(remote, master_branch)
+    else:
+        git.checkout(release_branch)
 
     release_version = version.from_file(version_file)
 
@@ -112,18 +121,21 @@ def finish(version_file='VERSION', remote=None):
     if remote is not None:
         git.push(remote, release_tag)
 
-    git.checkout('develop')
+    git.checkout(develop_branch)
 
     current_version = version.from_file(version_file)
 
-    git.merge('master', 'Merge master', remote=remote)
+    if master_branch:
+        git.merge(master_branch, 'Merge {}'.format(master_branch), remote=remote)
+    else:
+        git.merge(release_branch, 'Merge {}'.format(release_branch), remote=remote)
 
     version.to_file(current_version, version_file)
 
     git.commit((version_file,), 'Restore the current version {}'.format(current_version))
 
     if remote is not None:
-        git.push(remote, 'develop')
+        git.push(remote, develop_branch)
 
     git.delete_branch(release_branch, remote=remote)
 
@@ -147,6 +159,20 @@ def parse_args(argv):
     parser.add_argument(
         '--remote',
         help='remote name to work with. Leave unset for local-only operation')
+
+    parser.add_argument(
+        '--master-branch',
+        default='master',
+        help='name of the master branch')
+
+    parser.add_argument(
+        '--skip-master', action='store_true', default=False,
+        help='do not involve master branch')
+
+    parser.add_argument(
+        '--develop-branch',
+        default='develop',
+        help='name of the develop branch')
 
     parser.add_argument(
         '--json', action='store_true', default=False,
@@ -181,10 +207,17 @@ def main():
     logging.basicConfig(level=log_level)
 
     try:
+        if args.skip_master:
+            master_branch = None
+        else:
+            master_branch = args.master_branch
+
         if args.command == 'start':
-            result = start(args.version, args.version_file, args.remote)
+            result = start(
+                args.version, args.version_file, args.remote, args.develop_branch)
         elif args.command == 'finish':
-            result = finish(args.version_file, args.remote)
+            result = finish(
+                args.version_file, args.remote, args.develop_branch, master_branch)
 
         if args.json:
             print(json.dumps(result))
