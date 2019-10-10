@@ -67,7 +67,7 @@ def start(
 
 def finish(
         version_file='VERSION', remote=None,
-        develop_branch='develop', master_branch='master'):
+        develop_branch='develop', master_branch='master', tag_prefix=None):
 
     if not git.working_tree_is_clean():
         raise RuntimeError('Working tree is not clean')
@@ -114,7 +114,10 @@ def finish(
     else:
         release_message = 'Release {}'.format(release_version)
 
-    release_tag = release_version
+    if tag_prefix:
+        release_tag = '{}{}'.format(tag_prefix, release_version)
+    else:
+        release_tag = release_version
 
     git.tag(release_tag, release_message)
 
@@ -175,6 +178,10 @@ def parse_args(argv):
         help='name of the develop branch')
 
     parser.add_argument(
+        '--tag-prefix',
+        help='prefix to prepend to tags')
+
+    parser.add_argument(
         '--json', action='store_true', default=False,
         help='enable JSON output')
 
@@ -217,7 +224,7 @@ def main():
                 args.version, args.version_file, args.remote, args.develop_branch)
         elif args.command == 'finish':
             result = finish(
-                args.version_file, args.remote, args.develop_branch, master_branch)
+                args.version_file, args.remote, args.develop_branch, master_branch, args.tag_prefix)
 
         if args.json:
             print(json.dumps(result))
