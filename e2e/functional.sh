@@ -172,6 +172,42 @@ test_local_next_pre_release () {
     assert_stdout 'cat VERSION' <<< '0.1.0-BETA2'
 }
 
+test_local_tag_prefix () {
+    declare workspace="${TEMP_DIR}/${FUNCNAME[0]}"
+
+    mkdir -p "${workspace}/local"
+
+    cd "${workspace}/local"
+    git init .
+
+    touch foo
+    git add foo
+    git commit -m 'Add foo'
+    git checkout -b develop
+    printf '0.1.0-SNAPSHOT\n' >VERSION
+    git add VERSION
+    git commit -m 'Add VERSION'
+
+    lase start
+
+    assert_stdout 'cat VERSION' <<< '0.1.0'
+    assert_stdout 'git rev-parse --abbrev-ref HEAD' <<< 'release/0.1.0'
+
+    lase --tag-prefix=foo/ finish
+
+    assert_stdout 'git name-rev --name-only HEAD' <<< 'tags/foo/0.1.0^0'
+
+    git checkout develop
+
+    assert_stdout 'cat VERSION' <<< '0.1.1-SNAPSHOT'
+    assert_stdout_not_contains 'git for-each-ref --format="%(refname)" refs/heads' '^refs/heads/release/'
+
+    assert_stdout_contains 'git for-each-ref --format="%(refname)" refs/tags' '^refs/tags/foo/0.1.0$'
+
+    git checkout master
+
+    assert_stdout 'cat VERSION' <<< '0.1.0'
+}
 
 test_local_fails_on_existing_release () {
     declare workspace="${TEMP_DIR}/${FUNCNAME[0]}"
